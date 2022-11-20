@@ -147,6 +147,7 @@
             this.comboBox_products.Location = new System.Drawing.Point(16, 255);
             this.comboBox_products.Name = "comboBox_products";
             this.comboBox_products.Size = new System.Drawing.Size(367, 21);
+            this.comboBox_products.Sorted = true;
             this.comboBox_products.TabIndex = 19;
             // 
             // button_edit

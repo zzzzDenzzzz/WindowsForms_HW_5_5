@@ -1,25 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 
 namespace Task_2
 {
     public partial class AddingEditingForm : Form
     {
+        // список товаров
         List<Product> products;
+        // переменная, хранящая состояние кнопки Edit
         bool isEdit;
-        int numberProduct;
+        // хэш-код товара
+        int hashCodeProduct;
+        // путь к базе данных
+        string pathProduct;
 
         public AddingEditingForm()
         {
             InitializeComponent();
+            pathProduct = "product.dat";
             products = new List<Product>();
+            if (File.Exists(pathProduct))
+            {
+                ReadingFromFile();
+            }
             isEdit = false;
         }
 
@@ -30,14 +36,7 @@ namespace Task_2
         {
             if (isEdit)
             {
-                for (int i = 0; i < products.Count; i++)
-                {
-                    if (products[i].GetHashCode() == numberProduct)
-                    {
-                        products.RemoveAt(i);
-                        break;
-                    }
-                }
+                RemovingProductList();
                 isEdit = false;
             }
 
@@ -46,6 +45,8 @@ namespace Task_2
 
             products.Add(product);
             comboBox_products.Items.Add(product.Name);
+            SaveFile();
+            button_edit.Enabled = true;
         }
 
         /// <summary>
@@ -54,6 +55,7 @@ namespace Task_2
         private void button_edit_Click(object sender, EventArgs e)
         {
             isEdit = true;
+            button_edit.Enabled = false;
             foreach (Product item in products)
             {
                 if (item.Name == comboBox_products.SelectedItem.ToString())
@@ -62,10 +64,53 @@ namespace Task_2
                     textBox_specification.Text = item.Specification;
                     textBox_description.Text = item.Description;
                     textBox_price.Text = item.Price.ToString();
-                    numberProduct = item.GetHashCode();
+                    hashCodeProduct = item.GetHashCode();
                 }
             }
             comboBox_products.Items.RemoveAt(comboBox_products.SelectedIndex);
+        }
+
+        /// <summary>
+        /// сохранение базы в файл
+        /// </summary>
+        void SaveFile()
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            using (FileStream fs = new FileStream(pathProduct, FileMode.OpenOrCreate))
+            {
+                formatter.Serialize(fs, products);
+            }
+        }
+
+        /// <summary>
+        /// чтение из файла
+        /// </summary>
+        void ReadingFromFile()
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            using (FileStream fs = new FileStream(pathProduct, FileMode.OpenOrCreate))
+            {
+                products = (List<Product>)formatter.Deserialize(fs);
+                foreach (Product item in products)
+                {
+                    comboBox_products.Items.Add(item.Name);
+                }
+            }
+        }
+
+        /// <summary>
+        /// удаление товара из List при редактировании
+        /// </summary>
+        void RemovingProductList()
+        {
+            for (int i = 0; i < products.Count; i++)
+            {
+                if (products[i].GetHashCode() == hashCodeProduct)
+                {
+                    products.RemoveAt(i);
+                    break;
+                }
+            }
         }
     }
 }
