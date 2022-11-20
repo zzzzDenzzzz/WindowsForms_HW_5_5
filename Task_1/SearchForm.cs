@@ -43,7 +43,7 @@ namespace Task_1
                     listBox_files.Items.Add(file.ToString());
                 }
 
-                MessageBox.Show("Нашлось " + listBox_files.Items.Count.ToString() + " файлов", "Результат добавления",
+                MessageBox.Show("Найдено " + listBox_files.Items.Count.ToString() + " файлов", "Результат добавления",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 Cursor = Cursors.Default;
