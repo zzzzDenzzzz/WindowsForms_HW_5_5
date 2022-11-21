@@ -41,7 +41,7 @@ namespace Task_2
             }
 
             var product = new Product(textBox_name.Text, textBox_specification.Text,
-                textBox_description.Text, decimal.Parse(textBox_price.Text));
+                textBox_description.Text, textBox_price.Text);
 
             products.Add(product);
             comboBox_products.Items.Add(product.Name);
@@ -56,6 +56,15 @@ namespace Task_2
         {
             isEdit = true;
             button_edit.Enabled = false;
+            FillingTextBox();
+            comboBox_products.Items.RemoveAt(comboBox_products.SelectedIndex);
+        }
+
+        /// <summary>
+        /// заполнение textBox
+        /// </summary>
+        void FillingTextBox()
+        {
             foreach (Product item in products)
             {
                 if (item.Name == comboBox_products.SelectedItem.ToString())
@@ -63,11 +72,10 @@ namespace Task_2
                     textBox_name.Text = item.Name;
                     textBox_specification.Text = item.Specification;
                     textBox_description.Text = item.Description;
-                    textBox_price.Text = item.Price.ToString();
+                    textBox_price.Text = item.Price;
                     hashCodeProduct = item.GetHashCode();
                 }
             }
-            comboBox_products.Items.RemoveAt(comboBox_products.SelectedIndex);
         }
 
         /// <summary>

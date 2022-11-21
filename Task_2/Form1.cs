@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 
 /*Фирма продает составляющие компьютера. Первая форма отвечает за учет продаж,
@@ -29,9 +25,20 @@ namespace Task_2
 {
     public partial class Form1 : Form
     {
+        List<Product> products;
+        string pathProduct;
+        // общая сумма
+        decimal totalCost;
+
         public Form1()
         {
+            pathProduct = "product.dat";
+            products = new List<Product>();
             InitializeComponent();
+            if (File.Exists(pathProduct))
+            {
+                FillingComboBox();
+            }
         }
 
         /// <summary>
@@ -41,6 +48,58 @@ namespace Task_2
         {
             AddingEditingForm form = new AddingEditingForm();
             form.ShowDialog();
+        }
+
+        /// <summary>
+        /// заполнение comboBox
+        /// </summary>
+        void FillingComboBox()
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            using (FileStream fs = new FileStream(pathProduct, FileMode.OpenOrCreate))
+            {
+                products = (List<Product>)formatter.Deserialize(fs);
+                foreach (Product item in products)
+                {
+                    comboBox_products.Items.Add(item.Name);
+                }
+            }
+        }
+
+        /// <summary>
+        /// добавляет в список товары
+        /// </summary>
+        private void button_add_Click(object sender, EventArgs e)
+        {
+            listBox_salesList.Items.Add(comboBox_products.SelectedItem);
+            FillingPriceTextBox();
+        }
+
+        /// <summary>
+        /// заполняет textBox с ценой
+        /// </summary>
+        void FillingPriceTextBox()
+        {
+            foreach (Product item in products)
+            {
+                if (item.Name == comboBox_products.SelectedItem.ToString())
+                {
+                    textBox_price.Text = item.Price;
+                }
+            }
+            TotalCost(textBox_price.Text);
+        }
+
+        /// <summary>
+        /// подсчет общей стоимости
+        /// </summary>
+        void TotalCost(string price)
+        {
+            if (decimal.TryParse(price, out decimal cost))
+            {
+                totalCost += cost;
+            }
+            textBox_totalCost.Text = totalCost.ToString();
         }
     }
 }

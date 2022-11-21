@@ -76,6 +76,7 @@
             this.comboBox_products.Location = new System.Drawing.Point(16, 37);
             this.comboBox_products.Name = "comboBox_products";
             this.comboBox_products.Size = new System.Drawing.Size(367, 21);
+            this.comboBox_products.Sorted = true;
             this.comboBox_products.TabIndex = 3;
             // 
             // label_totalCost
@@ -105,6 +106,7 @@
             this.button_add.TabIndex = 6;
             this.button_add.Text = "Добавить в список продаж";
             this.button_add.UseVisualStyleBackColor = true;
+            this.button_add.Click += new System.EventHandler(this.button_add_Click);
             // 
             // button_editProduct
             // 
